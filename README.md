@@ -1,4 +1,4 @@
-﻿# Task 27 - RentEasy
+﻿# RentEasy
 
 RentEasy is a microservice platform for residential and commercial rental workflows: listing publication, fast search, online booking, secure payment, landlord-tenant chat, ratings, and owner analytics.
 
@@ -38,7 +38,7 @@ RentEasy is a microservice platform for residential and commercial rental workfl
 ## Local run
 
 ```bash
-cd d:\Шарага\Кинжа11\Task_27_RentEasy
+cd 'your/project/folder'
 docker compose up --build -d
 ```
 
