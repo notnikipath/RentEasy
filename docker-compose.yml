@@ -1,0 +1,174 @@
+﻿services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: renteasy-api-gateway
+    env_file: .env
+    ports:
+      - "32059:8400"
+    depends_on:
+      - listing-service
+      - search-service
+      - booking-service
+      - payment-service
+      - chat-service
+      - review-service
+      - analytics-service
+      - notification-service
+    networks: [renteasy-net]
+
+  listing-service:
+    build:
+      context: .
+      dockerfile: listing-service/Dockerfile
+    container_name: renteasy-listing
+    env_file: .env
+    ports:
+      - "32060:8401"
+    depends_on:
+      - postgres
+      - redis
+    networks: [renteasy-net]
+
+  search-service:
+    build:
+      context: .
+      dockerfile: search-service/Dockerfile
+    container_name: renteasy-search
+    env_file: .env
+    ports:
+      - "32061:8402"
+    depends_on:
+      - elasticsearch
+      - redis
+    networks: [renteasy-net]
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: booking-service/Dockerfile
+    container_name: renteasy-booking
+    env_file: .env
+    ports:
+      - "32062:8403"
+    depends_on:
+      - postgres
+      - redis
+    networks: [renteasy-net]
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: payment-service/Dockerfile
+    container_name: renteasy-payment
+    env_file: .env
+    ports:
+      - "32063:8404"
+    depends_on:
+      - postgres
+    networks: [renteasy-net]
+
+  chat-service:
+    build:
+      context: .
+      dockerfile: chat-service/Dockerfile
+    container_name: renteasy-chat
+    env_file: .env
+    ports:
+      - "32064:8405"
+    depends_on:
+      - redis
+    networks: [renteasy-net]
+
+  review-service:
+    build:
+      context: .
+      dockerfile: review-service/Dockerfile
+    container_name: renteasy-review
+    env_file: .env
+    ports:
+      - "32065:8406"
+    depends_on:
+      - postgres
+    networks: [renteasy-net]
+
+  analytics-service:
+    build:
+      context: .
+      dockerfile: analytics-service/Dockerfile
+    container_name: renteasy-analytics
+    env_file: .env
+    ports:
+      - "32066:8407"
+    depends_on:
+      - postgres
+      - redis
+    networks: [renteasy-net]
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    container_name: renteasy-notification
+    env_file: .env
+    ports:
+      - "32067:8408"
+    depends_on:
+      - redis
+    networks: [renteasy-net]
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_GATEWAY_URL: ${VITE_API_GATEWAY_URL:-http://localhost:32059}
+    container_name: renteasy-frontend
+    env_file: .env
+    ports:
+      - "32068:5177"
+    depends_on:
+      - api-gateway
+    networks: [renteasy-net]
+
+  postgres:
+    image: postgres:16
+    container_name: renteasy-postgres
+    environment:
+      POSTGRES_DB: renteasy
+      POSTGRES_USER: renteasy
+      POSTGRES_PASSWORD: renteasy
+    ports:
+      - "32069:5432"
+    volumes:
+      - renteasy_postgres_data:/var/lib/postgresql/data
+    networks: [renteasy-net]
+
+  redis:
+    image: redis:7
+    container_name: renteasy-redis
+    ports:
+      - "32070:6379"
+    networks: [renteasy-net]
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: renteasy-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - renteasy_es_data:/usr/share/elasticsearch/data
+    networks: [renteasy-net]
+
+networks:
+  renteasy-net:
+    driver: bridge
+
+volumes:
+  renteasy_postgres_data:
+  renteasy_es_data:
