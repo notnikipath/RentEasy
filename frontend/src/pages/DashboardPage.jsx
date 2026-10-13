@@ -81,7 +81,7 @@ export function DashboardPage() {
       return "loading";
     }
     if (status === "failed") {
-      return "fallback";
+      return "Service unavailable";
     }
     return "live";
   }, [status]);
@@ -107,7 +107,7 @@ export function DashboardPage() {
       <header className="hero">
         <div className="hero-copy">
           <p className="eyebrow">RentEasy Platform</p>
-          <h1>Аренда жилья и коммерческой недвижимости в единой микросервисной платформе.</h1>
+          <h1>Управление арендой</h1>
           <p className="sub">
             Объявления, поиск, онлайн-бронирование, безопасные платежи, коммуникация и аналитика владельцев.
           </p>
@@ -125,12 +125,12 @@ export function DashboardPage() {
             <input value={hostId} onChange={(event) => setHostId(event.target.value)} placeholder="HOST-001" />
           </label>
           <div className="hero-actions">
-            <button onClick={refresh}>Refresh dashboard</button>
+            <button onClick={refresh} disabled={status === "loading"}>Refresh dashboard</button>
             <button className="ghost" onClick={() => setTheme((current) => (current === "light" ? "dark" : "light"))}>
               Theme
             </button>
           </div>
-          <p className="status-line">Status: {statusLabel}</p>
+          <p className="status-line" role="status" aria-live="polite">Status: {statusLabel}</p>
         </div>
       </header>
 
@@ -161,7 +161,7 @@ export function DashboardPage() {
         />
       </section>
 
-      {error ? <div className="error-banner">{error}</div> : null}
+      {error ? <div className="error-banner" role="alert">{error}</div> : null}
 
       <section className="content-grid">
         <article className="panel panel-featured">

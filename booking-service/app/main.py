@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import asyncio
 from datetime import date
@@ -203,12 +203,6 @@ async def cancel_booking(booking_id: str, request: BookingStatusRequest) -> dict
     return booking.model_dump(mode="json")
 
 
-@app.get("/bookings/{booking_id}")
-async def get_booking(booking_id: str) -> dict[str, Any]:
-    booking = bookings.get(booking_id)
-    if booking is None:
-        raise HTTPException(status_code=404, detail="Booking not found")
-    return booking.model_dump(mode="json")
 
 
 @app.get("/bookings/user/{user_id}")
@@ -238,3 +232,11 @@ async def parallel_plan(total_bookings: int = 4800, workers: int = 8) -> dict[st
 async def get_audit(limit: int = 100, actor_role: Role = Role.ADMIN) -> dict[str, Any]:
     _assert_permission(actor_role, "audit:read")
     return {"items": audit_log[-limit:]}
+
+
+@app.get("/bookings/{booking_id}")
+async def get_booking(booking_id: str) -> dict[str, Any]:
+    booking = bookings.get(booking_id)
+    if booking is None:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    return booking.model_dump(mode="json")

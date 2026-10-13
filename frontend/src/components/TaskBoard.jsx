@@ -13,7 +13,7 @@ export function TaskBoard({ bookings }) {
         <article className="route-stop" key={booking.booking_id}>
           <p className="lesson-type">Booking {booking.booking_id.slice(0, 8)}</p>
           <h4>
-            {booking.check_in} -> {booking.check_out}
+            {booking.check_in} → {booking.check_out}
           </h4>
           <div className="lesson-meta">
             <span>{booking.listing_id}</span>
